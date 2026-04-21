@@ -1,0 +1,303 @@
+openapi: 3.0.0
+info:
+  title: API Fédération de Collectivités Agricoles
+  description: |-
+    API REST pour la gestion de la fédération agricole nationale (Madagascar).
+    Couvre les fonctionnalités :
+    - A : Ouverture d'une nouvelle collectivité
+    - B : Admission (avec nouvelles conditions B-2), changement et démission d'un membre
+    - C : Cotisations, encaissements et reversements
+    - D : Comptes bancaires, mobile money et caisse (trésorerie)
+    - E : Activités obligatoires et exceptionnelles
+    - F : Assiduité (présences aux activités)
+    - G : Statistiques d'une collectivité
+    - H : Statistiques globales de la fédération
+  version: 2.0.0
+  contact:
+    name: Enseignant PROG3
+    email: ryan.a@example.com
+
+servers:
+  - url: https://api.federation-agricole.mg/v1
+    description: Serveur de production
+
+tags:
+  - name: Collectivités
+    description: Gestion des collectivités agricoles
+  - name: Membres
+    description: Gestion des membres (adhésion, démission, changement)
+  - name: Cotisations & Encaissements
+    description: Cotisations périodiques/ponctuelles, encaissements, reversements
+  - name: Comptes
+    description: Comptes bancaires, mobile money, caisse (trésorerie)
+  - name: Activités
+    description: Activités obligatoires ou exceptionnelles (collectivités et fédération)
+  - name: Assiduité
+    description: Présences aux activités, excuses
+  - name: Statistiques
+    description: Rapports mensuels et indicateurs par membre (collectivité)
+  - name: Fédération
+    description: Statistiques globales de la fédération
+
+paths:
+  /collectivites:
+    post:
+      tags:
+        - Collectivités
+      summary: Demander l'ouverture d'une nouvelle collectivité
+      description: |-
+        Crée une demande de nouvelle collectivité.
+        Conditions : au moins 10 membres avec ancienneté ≥ 6 mois, postes spécifiques pourvus, autorisation de la fédération.
+      operationId: createCollectivite
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectiviteInput'
+      responses:
+        '201':
+          description: Demande de création enregistrée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collectivite'
+        '400':
+          description: Données invalides
+        '422':
+          description: Conditions métier non satisfaites
+
+  /collectivites/{idCollectivite}/autorisation:
+    put:
+      tags:
+        - Collectivités
+      summary: Autoriser l'ouverture d'une collectivité (par la fédération)
+      operationId: autoriserCollectivite
+      parameters:
+        - name: idCollectivite
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                autorisee:
+                  type: boolean
+                commentaire:
+                  type: string
+      responses:
+        '200':
+          description: Autorisation mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collectivite'
+
+  /collectivites/{idCollectivite}/membres:
+    post:
+      tags:
+        - Membres
+      summary: Adhésion d'un nouveau membre à une collectivité (conditions renforcées)
+      description: |-
+        Nouvelles conditions d'admission (B-2) :
+        - Être parrainé par au moins deux membres confirmés.
+        - Règle de parrainage : le nombre de parrains issus de la collectivité visée doit être ≥ au nombre de parrains des autres collectivités.
+        - Fournir ses informations personnelles + la nature de la relation avec chaque parrain.
+        - Payer les frais d'adhésion (50 000 Ar) + la totalité des cotisations annuelles obligatoires de la collectivité.
+      operationId: addMembre
+      parameters:
+        - name: idCollectivite
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MembreInput'
+      responses:
+        '201':
+          description: Membre créé et adhésion enregistrée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Membre'
+        '400':
+          description: Données invalides
+        '422':
+          description: Conditions de parrainage non satisfaites ou paiement incomplet
+
+  /membres/{idMembre}/changer-collectivite:
+    put:
+      tags:
+        - Membres
+      summary: Changer de collectivité
+      operationId: changerCollectiviteMembre
+      parameters:
+        - name: idMembre
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nouvelleCollectiviteId:
+                  type: integer
+      responses:
+        '200':
+          description: Changement effectué
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Membre'
+
+  /membres/{idMembre}/demission:
+    delete:
+      tags:
+        - Membres
+      summary: Démission d'un membre
+      operationId: demissionnerMembre
+      parameters:
+        - name: idMembre
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Démission enregistrée
+
+  /collectivites/{idCollectivite}/cotisations:
+    post:
+      tags:
+        - Cotisations & Encaissements
+      summary: Créer une cotisation
+      operationId: createCotisation
+      parameters:
+        - name: idCollectivite
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CotisationInput'
+      responses:
+        '201':
+          description: Cotisation créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cotisation'
+
+  /collectivites/{idCollectivite}/encaissements:
+    post:
+      tags:
+        - Cotisations & Encaissements
+      summary: Enregistrer un encaissement
+      operationId: enregistrerEncaissement
+      parameters:
+        - name: idCollectivite
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncaissementInput'
+      responses:
+        '201':
+          description: Encaissement enregistré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encaissement'
+
+  /collectivites/{idCollectivite}/reversements:
+    get:
+      tags:
+        - Cotisations & Encaissements
+      summary: Calculer le montant à reverser à la fédération
+      operationId: getReversement
+      parameters:
+        - name: idCollectivite
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: dateDebut
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateFin
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Montant à reverser
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  montantTotalCotisationsPeriode:
+                    type: number
+                  pourcentageReversement:
+                    type: number
+                  montantAReverser:
+                    type: number
+
+components:
+  schemas:
+    CollectiviteInput:
+      type: object
+      required:
+        - nom
+        - ville
+        - specialite
+        - membresFondateurs
+        - postesSpecifiques
+      properties:
+        nom:
+          type: string
+        ville:
+          type: string
+        specialite:
+          type: string
+        membresFondateurs:
+          type: array
+          minItems: 10
+          items:
+            type: integer
+        postesSpecifiques:
+          type: object
+          properties:
+            presidentId:
+              type: integer
+            adjointId:
+              type: integer
+            tresorierId:
+              type: integer
+            secretaireId:
+              type: integer
