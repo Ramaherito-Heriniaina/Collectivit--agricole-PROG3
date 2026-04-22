@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class AccountService {
@@ -29,7 +28,7 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public List<Account> getAccounts(String collectivityId) {
-        return accountRepository.findByEntity("COLLECTIVITY", collectivityId);
+    public void getAccounts(String id) {
+        return ;
     }
 }

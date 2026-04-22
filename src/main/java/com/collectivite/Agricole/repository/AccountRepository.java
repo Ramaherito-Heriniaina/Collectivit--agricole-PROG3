@@ -26,7 +26,7 @@ public class AccountRepository {
         return Optional.ofNullable(storage.get(id));
     }
 
-    public List<Account> findByEntity(String entityType, String entityId) {
+    public Object findByEntity(String entityType, String entityId) {
         return storage.values().stream()
                 .filter(a -> a.getEntityType().equals(entityType) &&
                         (entityId == null || a.getEntityId().equals(entityId)))

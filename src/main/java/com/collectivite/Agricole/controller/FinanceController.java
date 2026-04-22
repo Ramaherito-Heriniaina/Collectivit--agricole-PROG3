@@ -3,7 +3,7 @@ package com.collectivite.Agricole.controller;
 
 import com.collectivite.Agricole.exception.BusinessException;
 import com.collectivite.Agricole.model.Account;
-import com.collectivite.Agricole.model.Contribution;
+import com.collectivite.Agricole.model.MembershipFee;
 import com.collectivite.Agricole.model.Payment;
 import com.collectivite.Agricole.service.AccountService;
 import com.collectivite.Agricole.service.ContributionService;
@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/collectivities/{id}")
@@ -30,9 +28,9 @@ public class FinanceController {
 
     @PostMapping("/contributions")
     public ResponseEntity<?> createContribution(@PathVariable String id,
-                                                @RequestBody Contribution contribution) {
+                                                @RequestBody MembershipFee contribution) {
         try {
-            Contribution created = contributionService.createContribution(id, contribution);
+            MembershipFee created = contributionService.createContribution(id, contribution);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (BusinessException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -51,8 +49,8 @@ public class FinanceController {
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<List<Account>> getAccounts(@PathVariable String id) {
-        return ResponseEntity.ok(accountService.getAccounts(id));
+    public ResponseEntity getAccounts(@PathVariable String id) {
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/accounts")

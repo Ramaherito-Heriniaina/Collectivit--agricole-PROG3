@@ -1,10 +1,13 @@
 package com.collectivite.Agricole.model;
 
 
+import lombok.Data;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class Member {
     private Long id;
     private String firstName;
@@ -20,6 +23,7 @@ public class Member {
     private List<Sponsor> sponsors = new ArrayList<>();
     private boolean feesPaid;
     private boolean annualContributionsPaid;
+    private String collectivityId;
 
     // Getters et setters (tous)
     public Long getId() { return id; }
@@ -50,4 +54,9 @@ public class Member {
     public void setFeesPaid(boolean feesPaid) { this.feesPaid = feesPaid; }
     public boolean isAnnualContributionsPaid() { return annualContributionsPaid; }
     public void setAnnualContributionsPaid(boolean annualContributionsPaid) { this.annualContributionsPaid = annualContributionsPaid; }
+
+    public String getCollectivityId() {
+        String CollectivityId = "";
+        return CollectivityId ;
+    }
 }

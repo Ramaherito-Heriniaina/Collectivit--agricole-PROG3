@@ -2,7 +2,7 @@ package com.collectivite.Agricole.service;
 
 
 import com.collectivite.Agricole.exception.BusinessException;
-import com.collectivite.Agricole.model.Contribution;
+import com.collectivite.Agricole.model.MembershipFee;
 import com.collectivite.Agricole.repository.CollectivityRepository;
 import com.collectivite.Agricole.repository.ContributionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class ContributionService {
     @Autowired
     private CollectivityRepository collectivityRepository;
 
-    public Contribution createContribution(String collectivityId, Contribution contribution) {
+    public MembershipFee createContribution(String collectivityId, MembershipFee contribution) {
         if (!collectivityRepository.existsById(collectivityId)) {
             throw new BusinessException("Collectivité introuvable");
         }
