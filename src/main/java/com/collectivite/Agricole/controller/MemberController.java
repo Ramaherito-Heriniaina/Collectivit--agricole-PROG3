@@ -21,7 +21,7 @@ public class MemberController {
         try {
             Member created = memberService.addMember(member);
             return new ResponseEntity<>(created, HttpStatus.CREATED);
-        } catch (BusinessException e) {
+        catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
