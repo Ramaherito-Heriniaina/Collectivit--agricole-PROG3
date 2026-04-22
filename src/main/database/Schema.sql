@@ -144,3 +144,54 @@ CREATE INDEX idx_payments_collectivity ON payments(collectivity_id);
 CREATE INDEX idx_attendances_activity ON attendances(activity_id);
 CREATE INDEX idx_activities_date ON activities(activity_date);
 CREATE INDEX idx_mandates_member ON mandates(member_id);
+
+
+-- Table des cotisations (contributions)
+CREATE TABLE IF NOT EXISTS contributions (
+                                             id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                             collectivity_id VARCHAR(36) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    periodicity VARCHAR(20) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    FOREIGN KEY (collectivity_id) REFERENCES collectivities(id) ON DELETE CASCADE
+    );
+
+-- Table des paiements (encaissements)
+CREATE TABLE IF NOT EXISTS payments (
+                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                        member_id VARCHAR(36) NOT NULL,
+    collectivity_id VARCHAR(36) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    payment_date DATE NOT NULL,
+    payment_mode VARCHAR(20) NOT NULL,
+    reference VARCHAR(255),
+    FOREIGN KEY (member_id) REFERENCES members(id),
+    FOREIGN KEY (collectivity_id) REFERENCES collectivities(id)
+    );
+
+-- Table des comptes (caisse, bancaire, mobile money)
+CREATE TABLE IF NOT EXISTS accounts (
+                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                        entity_type VARCHAR(20) NOT NULL, -- 'COLLECTIVITY' ou 'FEDERATION'
+    entity_id VARCHAR(36),
+    account_type VARCHAR(20) NOT NULL, -- 'CAISSE', 'BANCAIRE', 'MOBILE_MONEY'
+    holder_name VARCHAR(255) NOT NULL,
+    current_balance DECIMAL(15,2) DEFAULT 0,
+    last_update DATE,
+    -- champs bancaires
+    bank_name VARCHAR(50),
+    bank_code VARCHAR(5),
+    branch_code VARCHAR(5),
+    account_number VARCHAR(11),
+    rib_key VARCHAR(2),
+    -- champs mobile money
+    mobile_operator VARCHAR(20),
+    phone_number VARCHAR(20)
+    );
+
+-- Index pour performance
+CREATE INDEX idx_contributions_collectivity ON contributions(collectivity_id);
+CREATE INDEX idx_payments_member ON payments(member_id);
+CREATE INDEX idx_payments_collectivity ON payments(collectivity_id);
+CREATE INDEX idx_accounts_entity ON accounts(entity_type, entity_id);

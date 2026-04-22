@@ -26,4 +26,9 @@ public class CollectivityRepository {
     public boolean existsByNom(String nom) {
         return storage.values().stream().anyMatch(c -> nom.equals(c.getNom()));
     }
+
+    public boolean existsById(String id) {
+        return storage.containsKey(id);
+    }
+
 }
