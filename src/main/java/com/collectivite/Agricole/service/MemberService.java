@@ -23,7 +23,7 @@ public class MemberService {
             throw new BusinessException("Au moins deux parrains sont requis.");
         }
 
-        Long targetCollectivityId = member.getCollectivity().getId();
+        Long targetCollectivityId = Long.valueOf(member.getCollectivity().getId());
         long sameCollectivityCount = 0;
         long otherCollectivityCount = 0;
 

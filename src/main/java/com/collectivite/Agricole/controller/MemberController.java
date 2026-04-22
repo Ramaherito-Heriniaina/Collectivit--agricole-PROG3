@@ -1,6 +1,5 @@
 package com.collectivite.Agricole.controller;
 
-
 import com.collectivite.Agricole.exception.BusinessException;
 import com.collectivite.Agricole.model.Member;
 import com.collectivite.Agricole.service.MemberService;
@@ -20,7 +19,7 @@ public class MemberController {
     public ResponseEntity<?> addMember(@RequestBody Member member) {
         try {
             Member created = memberService.addMember(member);
-            return new ResponseEntity<>(created, HttpStatus.CREATED);
+            return new ResponseEntity<>(created, HttpStatus.CREATED);}
         catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         }

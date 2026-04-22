@@ -136,3 +136,11 @@ CREATE TABLE IF NOT EXISTS mandates (
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
     FOREIGN KEY (collectivity_id) REFERENCES collectivities(id) ON DELETE CASCADE
     );
+
+-- Index pour performance
+CREATE INDEX idx_members_collectivity ON members(collectivity_id);
+CREATE INDEX idx_payments_member ON payments(member_id);
+CREATE INDEX idx_payments_collectivity ON payments(collectivity_id);
+CREATE INDEX idx_attendances_activity ON attendances(activity_id);
+CREATE INDEX idx_activities_date ON activities(activity_date);
+CREATE INDEX idx_mandates_member ON mandates(member_id);
