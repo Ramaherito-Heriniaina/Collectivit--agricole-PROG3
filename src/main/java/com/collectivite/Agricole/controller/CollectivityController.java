@@ -1,7 +1,9 @@
 package com.collectivite.Agricole.controller;
 
-import com.collectivite.Agricole.model.CollectivityTransaction;
-import com.collectivite.Agricole.model.MembershipFee;
+import com.collectivite.Agricole.exception.BusinessException;
+import com.collectivite.Agricole.model.*;
+import com.collectivite.Agricole.repository.AccountRepository;
+import com.collectivite.Agricole.repository.CollectivityRepository;
 import com.collectivite.Agricole.service.MembershipFeeService;
 import com.collectivite.Agricole.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,5 +50,26 @@ public class CollectivityController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCollectivityById(@PathVariable String id) {
+        AccountRepository collectivityRepository = null;
+        Account collectivity = collectivityRepository.findById(Long.valueOf(id))
+                .orElseThrow();
+        return ResponseEntity.ok(collectivity);
+    }
+
+    @GetMapping("/{id}/financialAccounts")
+    public ResponseEntity<?> getFinancialAccounts(@PathVariable String id,
+                                                  @RequestParam("at") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate at) {
+        // Vérifier que la collectivité existe
+        CollectivityRepository collectivityRepository = null;
+        if (!collectivityRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Collectivité non trouvée");
+        }
+        Object accountService = null;
+        Class<?> accounts = accountService.getClass();
+        return ResponseEntity.ok(accounts);
     }
 }

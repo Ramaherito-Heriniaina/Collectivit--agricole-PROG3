@@ -7,7 +7,8 @@ info:
     - v0.0.1 (2026-04-21) : POST /collectivities for collectivities creation and POST /members for members creation.
     - v0.0.2 (2026-04-22) : PUT /collectivities/{id}/informations for collectivity information update.
     - v0.0.3 (2026-04-23) : New features about membership fees, collectivities transactions and its financial accounts, and members payments.
-  version: 0.0.1
+    - v0.0.4 (2026-04-23) : Add GET /collectivities/{id} and GET /collectivities/{id}/financialAccounts.
+  version: 0.0.4
 servers:
   - url: 'https://localhost:8080'
 paths:
@@ -37,6 +38,26 @@ paths:
           description: Collectivity without federation approval or structure missing.
         404:
           description: Member not found.
+
+  '/collectivities/{id}':
+    get:
+      summary: Get a collectivity by its ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: The collectivity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Collectivity'
+        404:
+          description: Collectivity not found
+
   '/collectivities/{id}/informations':
     put:
       summary: Attribute collectivity informations to specific collectivity
@@ -62,6 +83,7 @@ paths:
           description: Either given number or name is already used by other collectivity.
         404:
           description: Collectivity not found.
+
   '/collectivities/{id}/membershipFees':
     get:
       summary: Retrieve collectivity membership fees
@@ -110,6 +132,7 @@ paths:
           description: Either unrecognized frequency or amount under 0.
         404:
           description: Collectivity not found.
+
   '/collectivities/{id}/transactions':
     get:
       summary: Retrieve specific collectivity transactions for a given period
@@ -146,6 +169,37 @@ paths:
           description: Provided query parameters occur some exceptions.
         404:
           description: Collectivity not found.
+
+  '/collectivities/{id}/financialAccounts':
+    get:
+      summary: Get financial accounts of a collectivity with balance at a given date
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: at
+          schema:
+            type: string
+            format: date
+          required: true
+          description: Date at which to compute the balance
+      responses:
+        200:
+          description: List of financial accounts (cash, mobile banking, bank) with balance at the specified date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FinancialAccount'
+        400:
+          description: Invalid date format
+        404:
+          description: Collectivity not found
+
   '/members':
     post:
       summary: Create list of members
@@ -172,6 +226,7 @@ paths:
             - Membership dues not paid or registration fee not paid.
         404:
           description: Either collectivity or member not found.
+
   '/members/{id}/payments':
     post:
       summary: Create some payments for given member
@@ -355,7 +410,6 @@ components:
         creationDate:
           type: string
           format: date
-
     FinancialAccount:
       oneOf:
         - $ref: '#/components/schemas/CashAccount'
@@ -387,8 +441,7 @@ components:
         id:
           type: string
         holderName:
-          type:
-            string
+          type: string
         bankName:
           $ref: '#/components/schemas/Bank'
         bankCode:

@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS membership_fees (
 
 -- Table des paiements des membres (member_payments)
 CREATE TABLE IF NOT EXISTS member_payments (
-                                               id VARCHAR(36) PRIMARY KEY,
+    id VARCHAR(36) PRIMARY KEY,
     member_id VARCHAR(36) NOT NULL,
     membership_fee_id VARCHAR(36) NOT NULL,
     account_credited_id VARCHAR(36) NOT NULL,
@@ -175,8 +175,8 @@ CREATE TABLE IF NOT EXISTS member_payments (
 
 -- Table des comptes (caisse, bancaire, mobile money)
 CREATE TABLE IF NOT EXISTS accounts (
-                                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                        entity_type VARCHAR(20) NOT NULL, -- 'COLLECTIVITY' ou 'FEDERATION'
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    entity_type VARCHAR(20) NOT NULL, -- 'COLLECTIVITY' ou 'FEDERATION'
     entity_id VARCHAR(36),
     account_type VARCHAR(20) NOT NULL, -- 'CAISSE', 'BANCAIRE', 'MOBILE_MONEY'
     holder_name VARCHAR(255) NOT NULL,
