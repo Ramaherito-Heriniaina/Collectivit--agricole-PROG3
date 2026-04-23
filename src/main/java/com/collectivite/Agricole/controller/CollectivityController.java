@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/collectivities/{id}")
 public class CollectivityController {
 
     @Autowired
